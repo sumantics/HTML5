@@ -1,0 +1,53 @@
+<!DOCYPE html>
+<html>
+    <body>
+        <video id="vid" autoplay controls loop src="demo.mp4"></video>            
+        <div>
+        <div>
+        <canvas id="can1"></canvas>
+        <canvas id="can2"></canvas>
+        </div>
+        <div>
+        <canvas id="can3"></canvas>
+        <canvas id="can4"></canvas>
+        </div>
+        </div>
+
+        <script>            
+            var n = 2;
+            document.addEventListener('DOMContentLoaded',function(){                                
+                console.log("DOMContentLoaded")                
+                var canvas1 = document.querySelector("#can1")
+                var canvas2 = document.querySelector("#can2")
+                var canvas3 = document.querySelector("#can3")
+                var canvas4 = document.querySelector("#can4")
+                var vid = document.querySelector("#vid")
+                var width = vid.clientWidth;
+                var height = vid.clientHeight;
+                var deltaWidth = vid.videoWidth/n;
+                var deltaHeight = vid.videoHeight/n;
+                console.log(width+ " "+height + " "+deltaWidth + " " +deltaHeight)
+                
+                vid.addEventListener('loadedmetadata', function(){
+                    console.log("loadedmetadata")
+                })
+                
+                vid.addEventListener('play', function(){
+                    if(vid.paused || vid.ended) return;                    
+                    console.log("drawing")
+                    draw();                    
+                })
+                
+                var draw = function(){
+                                            //              snip                scale
+                    canvas1.getContext("2d").drawImage(vid,0,0,deltaWidth,deltaHeight,0,0,width,height);
+                    canvas2.getContext("2d").drawImage(vid,deltaWidth,0,deltaWidth,deltaHeight,0,0,width,height);
+                    canvas3.getContext("2d").drawImage(vid,0,deltaHeight,deltaWidth,deltaHeight,0,0,width,height);
+                    canvas4.getContext("2d").drawImage(vid,deltaWidth,deltaHeight,deltaWidth,deltaHeight,0,0,width,height);
+                    requestAnimationFrame(draw);
+                }
+            })                                      
+        </script>
+    </body>
+</html>
+
