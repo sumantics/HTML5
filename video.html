@@ -2,49 +2,49 @@
 <html>
     <body>
         <video id="vid" autoplay controls loop src="demo.mp4"></video>            
-        <div>
-        <div>
-        <canvas id="can1"></canvas>
-        <canvas id="can2"></canvas>
-        </div>
-        <div>
-        <canvas id="can3"></canvas>
-        <canvas id="can4"></canvas>
-        </div>
-        </div>
-
         <script>            
             var n = 2;
-            //@TODO : make the canvas generation and split-rendering dynamic, based on the "n"
-            document.addEventListener('DOMContentLoaded',function(){                                
-                console.log("DOMContentLoaded")                
-                var canvas1 = document.querySelector("#can1")
-                var canvas2 = document.querySelector("#can2")
-                var canvas3 = document.querySelector("#can3")
-                var canvas4 = document.querySelector("#can4")
+            var canvases = [];
+            document.addEventListener('DOMContentLoaded',function(){                      
+                //console.log("DOMContentLoaded")              
+                var canvasCounter=0;
+                var div_wrapper = document.createElement('div');
+                for(var i=0;i<n;i++){
+		    canvases[i] = [];
+                    var div_col = document.createElement('div');
+                    for(var j=0;j<n;j++){
+                        canvasCounter++;
+                        var can = document.createElement('canvas');
+                            can.setAttribute("id","can"+canvasCounter);
+                            canvases[i][j] = can;
+                        div_col.appendChild(can);
+                    }                    
+                    div_wrapper.appendChild(div_col);
+                }                
+                document.body.appendChild(div_wrapper);
+                
                 var vid = document.querySelector("#vid")
                 var width = vid.clientWidth;
                 var height = vid.clientHeight;
                 var deltaWidth = vid.videoWidth/n;
                 var deltaHeight = vid.videoHeight/n;
-                console.log(width+ " "+height + " "+deltaWidth + " " +deltaHeight)
+                //console.log(width+ " "+height + " "+deltaWidth + " " +deltaHeight)
                 
-                vid.addEventListener('loadedmetadata', function(){
-                    console.log("loadedmetadata")
-                })
+                vid.addEventListener('loadedmetadata', function(){   })
                 
                 vid.addEventListener('play', function(){
-                    if(vid.paused || vid.ended) return;                    
-                    console.log("drawing")
+                    if(vid.paused || vid.ended)	return;		    
+                    //console.log("drawing")
                     draw();                    
                 })
                 
                 var draw = function(){
-                                            //              snip                scale
-                    canvas1.getContext("2d").drawImage(vid,0,0,deltaWidth,deltaHeight,0,0,width,height);
-                    canvas2.getContext("2d").drawImage(vid,deltaWidth,0,deltaWidth,deltaHeight,0,0,width,height);
-                    canvas3.getContext("2d").drawImage(vid,0,deltaHeight,deltaWidth,deltaHeight,0,0,width,height);
-                    canvas4.getContext("2d").drawImage(vid,deltaWidth,deltaHeight,deltaWidth,deltaHeight,0,0,width,height);
+                    for(var i=0;i<n;i++){
+                        for(var j=0;j<n;j++){
+                            canvases[i][j].getContext("2d").drawImage(vid,deltaWidth*j,deltaHeight*i,deltaWidth,deltaHeight,0,0,width,height);
+                            //console.log("draw : "+ deltaWidth*j+" "+deltaHeight*i)
+                        }
+                    }
                     requestAnimationFrame(draw);
                 }
             })                                      
