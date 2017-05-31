@@ -3,7 +3,7 @@
     <body>
         <video id="vid" autoplay controls loop src="demo.mp4"></video>            
         <script>            
-            var n = 2;
+            var n = 3;
             var canvases = [];
             document.addEventListener('DOMContentLoaded',function(){                      
                 //console.log("DOMContentLoaded")              
@@ -16,6 +16,7 @@
                         canvasCounter++;
                         var can = document.createElement('canvas');
                             can.setAttribute("id","can"+canvasCounter);
+                            can.setAttribute("style","border: thin solid white");
                             canvases[i][j] = can;
                         div_col.appendChild(can);
                     }                    
