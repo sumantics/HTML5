@@ -1,0 +1,56 @@
+<!DOCYPE html>
+<html>
+    <body>
+    	<div>
+		<img id="mainImage" src="" width = "300px" height = "200px"></img>
+		<div id="adminPerm">
+		<div>
+			<label>count</label>
+			<input id="editCount"></input>
+		</div>
+		<div>
+			<label>url</label>
+			<input id="editUrl"></input>
+		</div>
+		<button id="saveButton">Save</button>
+		</div>
+	</div>
+	<script>            
+	    var selectedCnt = 0;
+	    var selectedImg = "";
+            var num=5;
+            var counts = [];
+	    var ul = document.createElement('ul'); 
+            for(var i = 0; i < num; i++){ 
+		var div = document.createElement('div');                 		    
+                var cnt = document.createElement('label');                 
+                cnt.textContent=0;
+                var image = document.createElement('img');                 
+                image.setAttribute("src","image"+i+".png");
+                image.setAttribute("width","50px");
+                image.setAttribute("height","50px");
+		image.setAttribute("style","background: gray");	    		
+                image.addEventListener('click', (function(cnt, image,i) {
+                  return function() {		
+                    cnt.textContent=parseInt(cnt.textContent)+1;	  	  
+		    selectedCnt=cnt;		    		    
+		    selectedImg=image;
+		    document.getElementById("editCount").value=selectedCnt.textContent;
+		    document.getElementById("editUrl").value=selectedImg.getAttribute("src");
+		    document.getElementById("mainImage").setAttribute("src",image.getAttribute("src"));
+                  };
+                 })(cnt, image, i)
+		);
+                div.appendChild(image);
+                div.appendChild(cnt);
+                ul.appendChild(div);
+                document.body.appendChild(ul);
+            }
+            var button = document.getElementById("saveButton")
+	    button.addEventListener('click', (function() {				                
+	  	selectedCnt.textContent=parseInt(document.getElementById("editCount").value);      
+	  	selectedImg.setAttribute("src",document.getElementById("editUrl").value);      
+            }));
+        </script>
+    </body>
+</html>
