@@ -14,43 +14,106 @@
 		</div>
 		<button id="saveButton">Save</button>
 		</div>
+		<ul id="itemList">
+		</ul>
 	</div>
 	<script>            
-	    var selectedCnt = 0;
-	    var selectedImg = "";
-            var num=5;
-            var counts = [];
-	    var ul = document.createElement('ul'); 
-            for(var i = 0; i < num; i++){ 
-		var div = document.createElement('div');                 		    
-                var cnt = document.createElement('label');                 
-                cnt.textContent=0;
-                var image = document.createElement('img');                 
-                image.setAttribute("src","image"+i+".png");
-                image.setAttribute("width","50px");
-                image.setAttribute("height","50px");
-		image.setAttribute("style","background: gray");	    		
-                image.addEventListener('click', (function(cnt, image,i) {
-                  return function() {		
-                    cnt.textContent=parseInt(cnt.textContent)+1;	  	  
-		    selectedCnt=cnt;		    		    
-		    selectedImg=image;
-		    document.getElementById("editCount").value=selectedCnt.textContent;
-		    document.getElementById("editUrl").value=selectedImg.getAttribute("src");
-		    document.getElementById("mainImage").setAttribute("src",image.getAttribute("src"));
-                  };
-                 })(cnt, image, i)
-		);
-                div.appendChild(image);
-                div.appendChild(cnt);
-                ul.appendChild(div);
-                document.body.appendChild(ul);
-            }
-            var button = document.getElementById("saveButton")
-	    button.addEventListener('click', (function() {				                
-	  	selectedCnt.textContent=parseInt(document.getElementById("editCount").value);      
-	  	selectedImg.setAttribute("src",document.getElementById("editUrl").value);      
-            }));
+	    function generateItems(num){
+	    	function getImageUrl(i){return "image"+i+".png";}
+		var items = []
+	        for(var i = 0; i < num; i++){
+			items.push({	
+				count : 0,
+				src : getImageUrl(i)
+			})	
+		}			
+		return items;
+	    };		
+	    var model = {
+		selectedItem : null,
+		items : generateItems(5)	
+	    };
+	    var itemListView = {	//list of items
+		init : function(){
+			this.list = document.getElementById('itemList');
+			this.render();
+		},
+		render : function(){
+			this.items = controller.getItems();
+			this.list.innerHTML = ''; //nice, clean up
+			for(var i=0; i<this.items.length; i++){				
+				var elem = document.createElement('ul');
+				var div = document.createElement('div');
+		                var cnt = document.createElement('label');                 				
+				cnt.textContent=this.items[i].count;
+				var img = document.createElement('img');
+				img.setAttribute('src',this.items[i].src);
+		                img.setAttribute("width","50px");
+		                img.setAttribute("height","50px");
+				elem.addEventListener('click', (function(item) {
+			                return function() {
+			                    if(controller.getSelectedItem().src==item.src){
+						controller.incrementCounter();
+						itemListView.render();
+					}else{
+			                    controller.setSelectedItem(item);
+					}
+			                itemView.render();
+                			};
+				})(this.items[i]));
+				elem.appendChild(div);
+				div.appendChild(img);
+				div.appendChild(cnt);
+				this.list.appendChild(elem);
+			}
+		}		
+	    };
+	    var itemView = {
+		init : function(){	//selected Item
+			this.mainImage = document.getElementById('mainImage');			
+			this.mainImage.addEventListener('click', function(){
+				controller.incrementCounter();
+				itemListView.render();
+        		});
+			this.editUrl = document.getElementById('editUrl');
+			this.editCount = document.getElementById('editCount');
+			document.getElementById('saveButton').addEventListener('click', function(){
+				var selectedItem = controller.getSelectedItem();
+				selectedItem.src=editUrl.value;
+				selectedItem.count=editCount.value;
+				itemListView.render();
+				itemView.render();
+			});
+			this.render();
+		},
+		render : function(){
+			var selectedItem = controller.getSelectedItem();
+			this.mainImage.src = selectedItem.src;
+			this.editCount.value=selectedItem.count;
+			this.editUrl.value = selectedItem.src;
+		}		       
+	    };
+	    var controller = {
+		init : function() {
+			model.selectedItem = model.items[0];
+        		itemListView.init();
+			itemView.init();
+		},
+		getSelectedItem : function() {
+	        	return model.selectedItem;
+    		},
+		getItems: function() {
+			return model.items;
+    		},
+		setSelectedItem : function(item) {
+			model.selectedItem = item;
+    		},
+		incrementCounter: function() {
+			model.selectedItem.count++;
+			itemView.render();
+		}
+	    };
+	    controller.init();
         </script>
     </body>
 </html>
