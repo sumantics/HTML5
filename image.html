@@ -24,11 +24,17 @@
 	        for(var i = 0; i < num; i++){
 			items.push({	
 				count : 0,
+				phase : "infant",
 				src : getImageUrl(i)
 			})	
 		}			
 		return items;
-	    };		
+	    };
+	    function updatePhase(item){
+	    	if(item.count>4) item.phase="old"
+			else if(item.count>2) item.phase="teenage"
+			else item.phase="infant"
+	    }
 	    var model = {
 		selectedItem : null,
 		items : generateItems(5)	
@@ -44,8 +50,10 @@
 			for(var i=0; i<this.items.length; i++){				
 				var elem = document.createElement('ul');
 				var div = document.createElement('div');
-		                var cnt = document.createElement('label');                 				
+		        var cnt = document.createElement('label');
+		       	var phase = document.createElement('label');
 				cnt.textContent=this.items[i].count;
+				phase.textContent=this.items[i].phase;
 				var img = document.createElement('img');
 				img.setAttribute('src',this.items[i].src);
 		                img.setAttribute("width","50px");
@@ -64,6 +72,7 @@
 				elem.appendChild(div);
 				div.appendChild(img);
 				div.appendChild(cnt);
+				div.appendChild(phase);
 				this.list.appendChild(elem);
 			}
 		}		
@@ -81,6 +90,7 @@
 				var selectedItem = controller.getSelectedItem();
 				selectedItem.src=editUrl.value;
 				selectedItem.count=editCount.value;
+				updatePhase(selectedItem);
 				itemListView.render();
 				itemView.render();
 			});
@@ -110,6 +120,7 @@
     		},
 		incrementCounter: function() {
 			model.selectedItem.count++;
+			updatePhase(model.selectedItem);
 			itemView.render();
 		}
 	    };
